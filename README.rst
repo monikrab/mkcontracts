@@ -1,5 +1,6 @@
-Introduction
-============
+
+mkcontracts
+-----------
 This module provides a collection of decorators that makes it easy to
 write software using contracts.
 
