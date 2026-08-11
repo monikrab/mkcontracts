@@ -22,28 +22,12 @@ that condition.  The condition is executed automatically and passed certain
 arguments (which vary depending on the type of contract), and must return
 a boolean value: True if the condition has been met, and False otherwise.
 
-Legacy Python Support
-=====================
-This module supports versions of Python >= 3.5; that is, versions with
-support for "async def" functions.  There is a branch of this module that
-is kept compatible to the greatest possible degree for versions of Python
-earlier than 3.5 (including Python 2.7).
 
-The Python 2 and <= 3.5 branch is available at
-https://github.com/deadpixi/contracts/tree/python2
-
-This legacy-compatible version is also distributed on PyPI along the 0.5.x
-branch; this branch will kept compatible with newer versions to the greatest
-extent possible.
-
-That branch is a drop-in replacement for this module and includes most
-of the functionality, except support for "async def" functions and a few
-other things.
 
 Preconditions and Postconditions
 ================================
 
-    >>> from dpcontracts import require, ensure
+    >>> from mkcontracts import require, ensure
 
 Contracts on functions consist of preconditions and postconditions.
 A precondition is declared using the ``requires`` decorator, and describes
@@ -71,7 +55,7 @@ with a ``PreconditionError`` (a subtype of ``AssertionError``):
 
     >>> add2("foo", 2)
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: `i` must be an integer
+    mkcontracts.PreconditionError: `i` must be an integer
 
 Functions can also have postconditions, specified using the ``ensure``
 decorator.  Postconditions describe what must be true after the function
@@ -99,7 +83,7 @@ Except that the function is broken in unexpected ways:
 
     >>> add2(7, 4)
     Traceback (most recent call last):
-    dpcontracts.PostconditionError: the result must be greater than either `i` or `j`
+    mkcontracts.PostconditionError: the result must be greater than either `i` or `j`
 
 The function specifying the condition doesn't have to be a lambda; it can be
 any function, and pre- and postconditions don't have to actually reference
@@ -122,10 +106,10 @@ the function's environments and effects:
     >>> add_to_database("Marvin")
     >>> add_to_database("Marvin")
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: `name` must not already be in the database
+    mkcontracts.PreconditionError: `name` must not already be in the database
     >>> add_to_database("Rob")
     Traceback (most recent call last):
-    dpcontracts.PostconditionError: the normalized version of the name must be added to the database
+    mkcontracts.PostconditionError: the normalized version of the name must be added to the database
 
 All of the various calling conventions of Python are supported:
 
@@ -150,7 +134,7 @@ A common contract is to validate the types of arguments. To that end,
 there is an additional decorator, ``types``, that can be used
 to validate arguments' types:
 
-    >>> from dpcontracts import types
+    >>> from mkcontracts import types
 
     >>> class ExampleClass:
     ...     pass
@@ -165,11 +149,13 @@ to validate arguments' types:
 
     >>> func(1.0, "foo", ExampleClass) # invalid type for `a`
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: the types of arguments must be valid
+    mkcontracts.PreconditionError: the types of arguments must be valid
 
     >>> func(1, "foo") # invalid type (the default) for `c`
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: the types of arguments must be valid
+    mkcontracts.PreconditionError: the types of arguments must be valid
+
+
 
 Contracts on Classes
 ====================
@@ -187,7 +173,7 @@ not just bare functions:
 
     >>> foo = Foo("")
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: `name` should be nonempty
+    mkcontracts.PreconditionError: `name` should be nonempty
 
 Classes may also have an additional sort of contract specified over them:
 the invariant.  An invariant, created using the ``invariant`` decorator,
@@ -196,7 +182,7 @@ In this case, "always" means "before invocation of any method and after
 its return" -- methods are allowed to violate invariants so long as they
 are restored prior to return.
 
-    >>> from dpcontracts import invariant
+    >>> from mkcontracts import invariant
 
 Invariant contracts are passed a single variable, a reference to the
 instance of the class. For example:
@@ -230,11 +216,11 @@ instance of the class. For example:
     >>> nl.pop()
     >>> nl.pop()
     Traceback (most recent call last):
-    dpcontracts.PostconditionError: inner list can never be empty
+    mkcontracts.PostconditionError: inner list can never be empty
 
     >>> nl = NonemptyList(["a", "b", "c"])
     Traceback (most recent call last):
-    dpcontracts.PostconditionError: inner list must consist only of integers
+    mkcontracts.PostconditionError: inner list must consist only of integers
 
 Violations of invariants are ignored in the following situations:
 
@@ -273,7 +259,7 @@ For example:
     >>> x.break_everything()
     >>> x.get_always()
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: `always` should be True
+    mkcontracts.PreconditionError: `always` should be True
 
 Also note that if a method invokes another method on the same object,
 all of the invariants will be tested again:
@@ -281,6 +267,8 @@ all of the invariants will be tested again:
     >>> nl = NonemptyList([1,2,3])
     >>> nl.as_string() == '1,2,3'
     True
+
+
 
 Automatically Generated Descriptions
 ====================================
@@ -336,6 +324,8 @@ Tests can span more than one line as well:
     PostconditionError: @ensure(lambda args, result: all([
         result > 0])) failed
 
+
+
 Preserving Old Values
 =====================
 Sometimes it's important to be able to compare the results of a function with the
@@ -364,6 +354,8 @@ previous state of the program. Earlier states can be preserved using the
 Note that Python's pass-by-reference semantics still apply, so if you need to
 preserve an old value, you might have to copy it.
 
+
+
 Transforming Data in Contracts
 ==============================
 In general, you should avoid transforming data inside a contract; contracts
@@ -385,7 +377,7 @@ This works well in most situations:
     6
     >>> my_func([0, -1, 2])
     Traceback (most recent call last):
-    dpcontracts.PreconditionError: every item in `l` must be > 0
+    mkcontracts.PreconditionError: every item in `l` must be > 0
 
 But it fails in the case of a generator:
 
@@ -409,7 +401,7 @@ We get around that limitation here using an additional decorator, called
 ``transform`` that transforms the arguments to a function, and a function
 called ``rewrite`` that rewrites argument tuples.
 
-    >>> from dpcontracts import transform, rewrite
+    >>> from mkcontracts import transform, rewrite
 
 For example:
 
@@ -432,6 +424,8 @@ This works for class methods too, of course:
     ...         return sum(l)
     >>> TestClass().my_func(iota(5))
     10
+
+
 
 Contracts on Asynchronous Functions (aka coroutine functions)
 =============================================================
@@ -463,33 +457,8 @@ influence the run loop:
     Traceback (most recent call last):
     AssertionError: contract predicates cannot be coroutines
 
-Contracts and Debugging
-=======================
-Contracts are a documentation and testing tool; they are not intended
-to be used to validate user input or implement program logic.  Indeed,
-running Python with ``__debug__`` set to False (e.g. by calling the Python
-intrepreter with the "-O" option) disables contracts.
 
-Testing This Module
-===================
-This module has embedded doctests that are run with the module is invoked
-from the command line.  Simply run the module directly to run the tests.
 
-Contact Information and Licensing
+Licensing
 =================================
-This module has a home page at `GitHub <https://github.com/deadpixi/contracts>`_.
-
-This module was written by Rob King (jking@deadpixi.com).
-
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU Lesser General Public License as published by
-the Free Software Foundation, either version 3 of the License, or
-(at your option) any later version.
-
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU Lesser General Public License for more details.
-
-You should have received a copy of the GNU Lesser General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
+This module was written by Rob King (jking@deadpixi.com) and forked by monikrab (https://github.com/monikrab). It is distributed under the terms of the GNU Lesser General Public License, version 3 or later.
