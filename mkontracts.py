@@ -1,11 +1,9 @@
-#!/usr/bin/env python3
 
 from ast import parse
 from collections import namedtuple
 from functools import wraps
 from inspect import isfunction, ismethod, iscoroutinefunction, getfullargspec, getsource
 from sys import version_info
-
 
 
 class PreconditionError(AssertionError):

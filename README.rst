@@ -1,5 +1,5 @@
 
-mkcontracts
+mkontracts
 -----------
 This module provides a collection of decorators that makes it easy to
 write software using contracts.
@@ -28,7 +28,7 @@ a boolean value: True if the condition has been met, and False otherwise.
 Preconditions and Postconditions
 ================================
 
-    >>> from mkcontracts import require, ensure
+    >>> from mkontracts import require, ensure
 
 Contracts on functions consist of preconditions and postconditions.
 A precondition is declared using the ``requires`` decorator, and describes
@@ -56,7 +56,7 @@ with a ``PreconditionError`` (a subtype of ``AssertionError``):
 
     >>> add2("foo", 2)
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: `i` must be an integer
+    mkontracts.PreconditionError: `i` must be an integer
 
 Functions can also have postconditions, specified using the ``ensure``
 decorator.  Postconditions describe what must be true after the function
@@ -84,7 +84,7 @@ Except that the function is broken in unexpected ways:
 
     >>> add2(7, 4)
     Traceback (most recent call last):
-    mkcontracts.PostconditionError: the result must be greater than either `i` or `j`
+    mkontracts.PostconditionError: the result must be greater than either `i` or `j`
 
 The function specifying the condition doesn't have to be a lambda; it can be
 any function, and pre- and postconditions don't have to actually reference
@@ -107,10 +107,10 @@ the function's environments and effects:
     >>> add_to_database("Marvin")
     >>> add_to_database("Marvin")
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: `name` must not already be in the database
+    mkontracts.PreconditionError: `name` must not already be in the database
     >>> add_to_database("Rob")
     Traceback (most recent call last):
-    mkcontracts.PostconditionError: the normalized version of the name must be added to the database
+    mkontracts.PostconditionError: the normalized version of the name must be added to the database
 
 All of the various calling conventions of Python are supported:
 
@@ -135,7 +135,7 @@ A common contract is to validate the types of arguments. To that end,
 there is an additional decorator, ``types``, that can be used
 to validate arguments' types:
 
-    >>> from mkcontracts import types
+    >>> from mkontracts import types
 
     >>> class ExampleClass:
     ...     pass
@@ -150,11 +150,11 @@ to validate arguments' types:
 
     >>> func(1.0, "foo", ExampleClass) # invalid type for `a`
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: the types of arguments must be valid
+    mkontracts.PreconditionError: the types of arguments must be valid
 
     >>> func(1, "foo") # invalid type (the default) for `c`
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: the types of arguments must be valid
+    mkontracts.PreconditionError: the types of arguments must be valid
 
 
 
@@ -174,7 +174,7 @@ not just bare functions:
 
     >>> foo = Foo("")
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: `name` should be nonempty
+    mkontracts.PreconditionError: `name` should be nonempty
 
 Classes may also have an additional sort of contract specified over them:
 the invariant.  An invariant, created using the ``invariant`` decorator,
@@ -183,7 +183,7 @@ In this case, "always" means "before invocation of any method and after
 its return" -- methods are allowed to violate invariants so long as they
 are restored prior to return.
 
-    >>> from mkcontracts import invariant
+    >>> from mkontracts import invariant
 
 Invariant contracts are passed a single variable, a reference to the
 instance of the class. For example:
@@ -217,11 +217,11 @@ instance of the class. For example:
     >>> nl.pop()
     >>> nl.pop()
     Traceback (most recent call last):
-    mkcontracts.PostconditionError: inner list can never be empty
+    mkontracts.PostconditionError: inner list can never be empty
 
     >>> nl = NonemptyList(["a", "b", "c"])
     Traceback (most recent call last):
-    mkcontracts.PostconditionError: inner list must consist only of integers
+    mkontracts.PostconditionError: inner list must consist only of integers
 
 Violations of invariants are ignored in the following situations:
 
@@ -260,7 +260,7 @@ For example:
     >>> x.break_everything()
     >>> x.get_always()
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: `always` should be True
+    mkontracts.PreconditionError: `always` should be True
 
 Also note that if a method invokes another method on the same object,
 all of the invariants will be tested again:
@@ -378,7 +378,7 @@ This works well in most situations:
     6
     >>> my_func([0, -1, 2])
     Traceback (most recent call last):
-    mkcontracts.PreconditionError: every item in `l` must be > 0
+    mkontracts.PreconditionError: every item in `l` must be > 0
 
 But it fails in the case of a generator:
 
@@ -402,7 +402,7 @@ We get around that limitation here using an additional decorator, called
 ``transform`` that transforms the arguments to a function, and a function
 called ``rewrite`` that rewrites argument tuples.
 
-    >>> from mkcontracts import transform, rewrite
+    >>> from mkontracts import transform, rewrite
 
 For example:
 
