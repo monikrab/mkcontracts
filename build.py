@@ -11,8 +11,22 @@ from pathlib import Path
 
 
 # Reduce the binary's size
-environ["CFLAGS"] = environ.get("CFLAGS", "") + " -Os -fomit-frame-pointer"
-environ["LDFLAGS"] = environ.get("LDFLAGS", "") + " -s"
+environ["CFLAGS"] = environ.get("CFLAGS", "") + (
+    " -Os -fomit-frame-pointer "
+    " -ffunction-sections -fdata-sections "
+    " -fvisibility=hidden "
+    " -fno-common "
+    " -DNDEBUG "
+    " -DPy_LIMITED_API=0x030A0000"
+)
+environ["LDFLAGS"] = environ.get("LDFLAGS", "") + (
+    " -s "
+    " -Wl,--gc-sections "
+    " -Wl,-O1 "
+    " -Wl,--as-needed "
+    " -Wl,--strip-all "
+    " -Wl,-Bsymbolic"
+)
 
 
 class Build(build_ext):

@@ -45,11 +45,6 @@ def get_wrapped_func(func):
 
 
 def build_call(func, *args, **kwargs):
-    """
-    Build an argument dictionary suitable for passing via `**` expansion given
-    function `f`, positional arguments `args`, and keyword arguments `kwargs`.
-    """
-
     func = get_wrapped_func(func)
     named, vargs, _, defs, kwonly, kwonlydefs, _ = getfullargspec(func)
 
@@ -171,11 +166,6 @@ def condition(description, predicate, precondition=False, postcondition=False, i
 
 
 def require(arg1, arg2=None):
-    """
-    Specify a precondition described by `description` and tested by
-    `predicate`.
-    """
-
     assert (isinstance(arg1, str) and isfunction(arg2)) or (isfunction(arg1) and arg2 is None)
 
     description = ""
@@ -236,11 +226,6 @@ def transform(transformer):
 
 
 def types(**requirements):
-    """
-    Specify a precondition based on the types of the function's
-    arguments.
-    """
-
     def predicate(args):
         for name, kind in sorted(requirements.items()):
             assert hasattr(args, name), "missing required argument `%s`" % name
@@ -258,11 +243,6 @@ def types(**requirements):
 
 
 def ensure(arg1, arg2=None):
-    """
-    Specify a precondition described by `description` and tested by
-    `predicate`.
-    """
-
     assert (isinstance(arg1, str) and isfunction(arg2)) or (isfunction(arg1) and arg2 is None)
 
     description = ""
@@ -280,11 +260,6 @@ def ensure(arg1, arg2=None):
 
 
 def invariant(arg1, arg2=None):
-    """
-    Specify a class invariant described by `description` and tested
-    by `predicate`.
-    """
-
     desc = ""
     predicate = lambda x: x
 
